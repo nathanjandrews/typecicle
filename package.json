@@ -1,15 +1,16 @@
 {
-  "name": "typecicle",
-  "version": "0.0.0",
-  "module": "index.ts",
-  "type": "module",
-  "repository": {
-    "url": "https://github.com/nathanjandrews/typecicle"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  }
+	"name": "typecicle",
+	"version": "0.0.0",
+	"repository": {
+		"url": "https://github.com/nathanjandrews/typecicle"
+	},
+	"module": "index.ts",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"type": "module"
 }
