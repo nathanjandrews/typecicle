@@ -1,20 +1,6 @@
-import { z } from "zod";
+import { err } from "neverthrow";
 import type { StandardSchemaV1 } from "./standard-schema";
-import type { Prettify } from "./util";
-
-function command<
-	TOptions extends CommandOptionsMap,
-	TPositionalName extends string | undefined,
-	TPositionalValidator extends StandardSchemaV1,
->(args: {
-	options?: TOptions;
-	positional?: PositionalArgument<TPositionalName, TPositionalValidator>;
-	handler: Handler<
-		TOptions,
-		TPositionalName,
-		StandardSchemaV1.InferOutput<TPositionalValidator>
-	>;
-}) {}
+import { type Prettify, RESERVED_OPTION_NAMES } from "./util";
 
 type PositionalArgument<
 	TPositionalName extends string | undefined,
@@ -64,19 +50,31 @@ type PositionalHandlerArgument<
 		{}
 	: Prettify<{ [key in Exclude<TPositionalName, undefined>]: TValue }>;
 
-command({
-	options: {
-		route: {
-			validator: z.enum(["53", "66"]),
-		},
-	},
-	positional: {
-		name: "foo",
-		validator: z.object({
-			bar: z.boolean(),
-		}),
-	},
-	handler: ({ foo, options }) => {
-		foo.bar;
-	},
-});
+export function command<
+	TOptions extends CommandOptionsMap,
+	TPositionalName extends string | undefined,
+	TPositionalValidator extends StandardSchemaV1,
+>(args: {
+	name: string;
+	options?: TOptions;
+	positional?: PositionalArgument<TPositionalName, TPositionalValidator>;
+	handler: Handler<
+		TOptions,
+		TPositionalName,
+		StandardSchemaV1.InferOutput<TPositionalValidator>
+	>;
+}) {
+	const options = Object.entries(args.options ?? {}).map(([key, value]) => ({
+		key,
+		value,
+	}));
+
+	for (const option of options) {
+		if (RESERVED_OPTION_NAMES.includes(option.key)) {
+			return err({
+				command: args.name,
+				type,
+			});
+		}
+	}
+}

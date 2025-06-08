@@ -1,22 +1,12 @@
 import { z } from "zod/v4";
-
-console.log("Hello via Bun!");
-
-const b = 12;
-
-let a = 13;
+import { command } from "./src/command";
 
 const echoCommand = command({
-	name: "",
-	options: {
-		route: {
-			aliases: "z",
-			description: "",
-			parser: z.literal(["foo", "bar", "baz"]),
-		},
+	positional: {
+		name: "args",
+		validator: z.string(),
 	},
-	args: z.enum(["1", "2"]).array(),
-	handler: (opts, args) => {
+	handler: ({ args }) => {
 		console.log(args);
 	},
 });
